@@ -248,7 +248,7 @@
 
 ;; @ Requirements ;;;
 
-(require 'cl)
+(eval-when-compile (require 'cl))
 (require 'compile)
 
 ;; @ Custom groups ;;;
