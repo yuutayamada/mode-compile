@@ -1676,18 +1676,19 @@ Please send bugs-fixes/contributions/comments to boubaker@cena.fr")
                     (string-match mc--source-ext-regexp infile))))
     (save-excursion
       ;; Create a temporary buffer containing infile contents
-      (set-buffer (find-file-noselect infile))
-      (save-excursion
-        (save-restriction
-          (widen)
-          (goto-char (point-min))
-          ;; Grep into tmp buffer for main function
-          ;; THIS WILL NOT WORK FOR PROGRAMMING LANGAGES
-          ;; WHICH ARE NOT C DIALECTS:
-          ;; In non C-ish modes I hope this regexp will never be found :-(
-          (if (re-search-forward mc--find-C-main-regexp (point-max) t)
-              (concat base-fname mode-compile-exe-file-ext)
-            (concat base-fname "." mc--outfile-ext)))))))
+      (with-current-buffer
+          (find-file-noselect infile)
+        (save-excursion
+          (save-restriction
+            (widen)
+            (goto-char (point-min))
+            ;; Grep into tmp buffer for main function
+            ;; THIS WILL NOT WORK FOR PROGRAMMING LANGAGES
+            ;; WHICH ARE NOT C DIALECTS:
+            ;; In non C-ish modes I hope this regexp will never be found :-(
+            (if (re-search-forward mc--find-C-main-regexp (point-max) t)
+                (concat base-fname mode-compile-exe-file-ext)
+              (concat base-fname "." mc--outfile-ext))))))))
 
 (defun mc--build-output-args (infile)
   ;; Build output arguments for compile command by scanning INFILE.
@@ -1851,31 +1852,31 @@ Please send bugs-fixes/contributions/comments to boubaker@cena.fr")
 (defun mc--choose-makefile-rule (makefile &optional outfile)
   ;; Choose the makefile rule and set it makefile local
   (save-excursion
-    ;; Switch to makefile buffer
-    (set-buffer (find-file-noselect makefile))
-    (setq mc--selected-makerule
-          ;; Add the name of the out file to the makefile
-          ;; rules list if not allready in.
-          (let* ((mk-rules-alist (mc--get-makefile-rules makefile))
-                 (choices        (mapcar (lambda (x) (list x))
-                                         (if (or (not outfile)
-                                                 (mc--member outfile
-                                                             mk-rules-alist))
-                                             mk-rules-alist
-                                           (append mk-rules-alist
-                                                   (list outfile))))))
-            (completing-read
-             (if mode-compile-expert-p
-                 "Make rule: "
-               "Using `make', enter rule to rebuild ([TAB] to complete): ")
-             choices
-             nil nil
-             ;; initial contents
-             (or mc--selected-makerule
-                 (mc--makerule-completion choices outfile
-                                          (if outfile 'file)))
-             mc--selected-makerule-history
-             )))))
+    (with-current-buffer
+        ;; Switch to makefile buffer
+        (find-file-noselect makefile)
+      (setq mc--selected-makerule
+            ;; Add the name of the out file to the makefile
+            ;; rules list if not allready in.
+            (let* ((mk-rules-alist (mc--get-makefile-rules makefile))
+                   (choices        (mapcar (lambda (x) (list x))
+                                           (if (or (not outfile)
+                                                   (mc--member outfile
+                                                               mk-rules-alist))
+                                               mk-rules-alist
+                                             (append mk-rules-alist
+                                                     (list outfile))))))
+              (completing-read
+               (if mode-compile-expert-p
+                   "Make rule: "
+                 "Using `make', enter rule to rebuild ([TAB] to complete): ")
+               choices
+               nil nil
+               ;; initial contents
+               (or mc--selected-makerule
+                   (mc--makerule-completion choices outfile
+                                            (if outfile 'file)))
+               mc--selected-makerule-history))))))
 
 (defmacro mc--cleanup-makefile-list (makefile-list)
   ;; Remove unusable and/or backups makefiles from list
