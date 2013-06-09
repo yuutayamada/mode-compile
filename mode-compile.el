@@ -1880,7 +1880,7 @@ Please send bugs-fixes/contributions/comments to boubaker@cena.fr")
 (defmacro mc--cleanup-makefile-list (makefile-list)
   ;; Remove unusable and/or backups makefiles from list
   (` (let ((newlist))
-       (mapcar
+       (mapc
         (lambda (x)
           (if (and (mc--makefile-test-p x)
                    (or (not mode-compile-ignore-makefile-backups)
@@ -1914,7 +1914,7 @@ Please send bugs-fixes/contributions/comments to boubaker@cena.fr")
 
      (t
       ;; Many makefiles in directory ask user to select one
-      (let ((choices  (mapcar
+      (let ((choices  (mapc
                        (lambda (x) (list x))
                        makefile-list))
             (makefile nil))
@@ -2003,12 +2003,12 @@ Please send bugs-fixes/contributions/comments to boubaker@cena.fr")
           (or (listp errors-regexp-alist)
               (error "Compilation abort: In mc--shell-compile errors-regexp-alist not a list."))
           ;; Add new regexp alist to compilation-error-regexp-alist
-          (mapcar (lambda(x)
-                    (if (mc--member x compilation-error-regexp-alist) nil
-                      (setq compilation-error-regexp-alist
-                            (append (list x)
-                                    compilation-error-regexp-alist))))
-                  errors-regexp-alist)))
+          (mapc (lambda(x)
+                  (if (mc--member x compilation-error-regexp-alist) nil
+                    (setq compilation-error-regexp-alist
+                          (append (list x)
+                                  compilation-error-regexp-alist))))
+                errors-regexp-alist)))
     ;; Run compile with run-cmd
     (mc--compile run-cmd)))
 
