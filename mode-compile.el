@@ -2417,8 +2417,7 @@ The steps to guess which command to use to compile are:
 ;; @ user accessible/exported function ;;;
 
 ;; get reporter-submit-bug-report when byte-compiling
-(and (fboundp 'eval-when-compile)
-     (eval-when-compile (require 'reporter)))
+(eval-when-compile (require 'reporter))
 
 ;;;###autoload
 (defun mode-compile-submit-bug-report ()
