@@ -1,3 +1,4 @@
+;;; -*- coding: utf-8; mode: emacs-lisp; -*-
 ;;; mode-compile.el --- compile files according to major-mode
 
 ;; Copyright (C) 1994-2006  Heddy Boubaker
