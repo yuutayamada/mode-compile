@@ -1543,9 +1543,9 @@ Please send bugs-fixes/contributions/comments to boubaker@cena.fr")
         ;; No run-hooks
         (function
          (lambda (hooklist)
-           (mapcar '(lambda (x)
-                      ;; report an error if x not a function
-                      (funcall x))
+           (mapcar (lambda (x)
+                     ;; report an error if x not a function
+                     (funcall x))
                    hooklist)))))
 
 (defsubst mc--read-string (prompt &optional initial-contents)
@@ -1857,7 +1857,7 @@ Please send bugs-fixes/contributions/comments to boubaker@cena.fr")
           ;; Add the name of the out file to the makefile
           ;; rules list if not allready in.
           (let* ((mk-rules-alist (mc--get-makefile-rules makefile))
-                 (choices        (mapcar '(lambda (x) (list x))
+                 (choices        (mapcar (lambda (x) (list x))
                                          (if (or (not outfile)
                                                  (mc--member outfile
                                                              mk-rules-alist))
@@ -1881,15 +1881,15 @@ Please send bugs-fixes/contributions/comments to boubaker@cena.fr")
   ;; Remove unusable and/or backups makefiles from list
   (` (let ((newlist))
        (mapcar
-        '(lambda (x)
-           (if (and (mc--makefile-test-p x)
-                    (or (not mode-compile-ignore-makefile-backups)
-                        (not (string-match
-                              mode-compile-makefile-backups-regexp
-                              x))))
-               (setq newlist (cons x newlist))
-             (mc--msg "Removing makefile \"%s\" from completion list"
-                      x)))
+        (lambda (x)
+          (if (and (mc--makefile-test-p x)
+                   (or (not mode-compile-ignore-makefile-backups)
+                       (not (string-match
+                             mode-compile-makefile-backups-regexp
+                             x))))
+              (setq newlist (cons x newlist))
+            (mc--msg "Removing makefile \"%s\" from completion list"
+                     x)))
         (, makefile-list))
        newlist)))
 
@@ -1915,7 +1915,7 @@ Please send bugs-fixes/contributions/comments to boubaker@cena.fr")
      (t
       ;; Many makefiles in directory ask user to select one
       (let ((choices  (mapcar
-                       '(lambda (x) (list x))
+                       (lambda (x) (list x))
                        makefile-list))
             (makefile nil))
         (while
@@ -2003,11 +2003,11 @@ Please send bugs-fixes/contributions/comments to boubaker@cena.fr")
           (or (listp errors-regexp-alist)
               (error "Compilation abort: In mc--shell-compile errors-regexp-alist not a list."))
           ;; Add new regexp alist to compilation-error-regexp-alist
-          (mapcar '(lambda(x)
-                     (if (mc--member x compilation-error-regexp-alist) nil
-                       (setq compilation-error-regexp-alist
-                             (append (list x)
-                                     compilation-error-regexp-alist))))
+          (mapcar (lambda(x)
+                    (if (mc--member x compilation-error-regexp-alist) nil
+                      (setq compilation-error-regexp-alist
+                            (append (list x)
+                                    compilation-error-regexp-alist))))
                   errors-regexp-alist)))
     ;; Run compile with run-cmd
     (mc--compile run-cmd)))
@@ -2404,7 +2404,7 @@ The steps to guess which command to use to compile are:
             (progn
               (setq mc--kill-compile 'kill-compilation)
               ;; Byte-compiling says `makefile' is not referenced.
-              '(lambda () (makefile-compile mc--makefile)))))
+              (lambda () (makefile-compile mc--makefile)))))
       ;; step 4
       (progn
         (mc--msg "Don't know how to compile %s, giving up..."
